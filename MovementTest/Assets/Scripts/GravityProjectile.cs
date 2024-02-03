@@ -18,6 +18,20 @@ public class GravityProjectile : MonoBehaviour
         Destroy(this.gameObject, 3);
     }
 
+    public void Initialize(Vector2 direction, bool isFlipped)
+    {
+        Rigidbody2D rb = GetComponent<Rigidbody2D>();
+        if (rb != null)
+        {
+            Vector2 moveDirection = direction.normalized;
+            if (isFlipped)
+            {
+                transform.localScale = new Vector3(-transform.localScale.x, transform.localScale.y, transform.localScale.z);
+            }
+            rb.velocity = moveDirection * speed;
+        }
+    }
+
     void FixedUpdate()
     {
         

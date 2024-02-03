@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class EnemyController : MonoBehaviour
 {
-
+    public KPhysicsObject kPhysicsObject;
 
 
     private void OnTriggerEnter2D(Collider2D other)
@@ -21,12 +21,29 @@ public class EnemyController : MonoBehaviour
 
                 }
                 else
+                {
                     Debug.Log("Hit By Enemy Projectile");
+                    InvertGravity();
+                }
             }
         }
        
     }
 
+    void InvertGravity()
+    {
+        if (kPhysicsObject != null)
+        {
+            Vector2 currentGravityDirection = kPhysicsObject.localGravityDirection;
+            Vector2 invertedGravityDirection = -currentGravityDirection;
+            
+            if(kPhysicsObject.useGlobalGravity)
+            {
+                kPhysicsObject.useGlobalGravity = false;
+            }
+            kPhysicsObject.localGravityDirection = invertedGravityDirection;
+        }
+    }
 
 
 }

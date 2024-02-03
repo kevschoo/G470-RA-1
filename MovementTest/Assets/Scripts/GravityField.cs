@@ -18,35 +18,35 @@ public class GravityField : MonoBehaviour
     {
         if (other.gameObject.CompareTag("Player"))
         {
-            PlayerController playerController = other.GetComponent<PlayerController>();
+            PlayerMovementController playerController = other.GetComponent<PlayerMovementController>();
 
             if (playerController != null)
             {
-                Vector2 gravityVector = WorldPhysicsEvents.instance.GetGravityVector(fieldDirection);
+                Vector2 gravityVector = KPhysics.GetGravityVector(fieldDirection);
 
                 if (affectsGlobalGravity)
                 {
-                    WorldPhysicsEvents.instance?.FlipGravity(gravityVector);
+                    KPhysics.instance?.FlipGravity(other.gameObject, gravityVector);
                 }
                 else if (affectsPlayerGravity)
                 {
                     playerController.useGlobalGravity = false;
-                    playerController.playerGravityDirection = gravityVector;
+                    playerController.localGravityDirection = gravityVector;
                 }
             }
         }
         else if (other.gameObject.CompareTag("GravityObject"))
         {
-            GravObjectController gravController = other.GetComponent<GravObjectController>();
+            KPhysicsObject gravController = other.GetComponent<KPhysicsObject>();
 
             if (gravController != null)
             {
-                Vector2 gravityVector = WorldPhysicsEvents.instance.GetGravityVector(fieldDirection);
+                Vector2 gravityVector = KPhysics.GetGravityVector(fieldDirection);
 
                 if (affectsGravityObjects)
                 {
                     gravController.useGlobalGravity = false;
-                    gravController.gravityDirection = gravityVector;
+                    gravController.localGravityDirection = gravityVector;
                 }
             }
         }
@@ -56,17 +56,17 @@ public class GravityField : MonoBehaviour
     {
         if (other.gameObject.CompareTag("Player") && affectsPlayerGravity)
         {
-            PlayerController playerController = other.GetComponent<PlayerController>();
+            PlayerMovementController playerController = other.GetComponent<PlayerMovementController>();
 
             if (playerController != null)
             {
                 playerController.useGlobalGravity = true;
-                playerController.HandleGravityChange(WorldPhysicsEvents.instance.gravityVector);
+                playerController.HandleGravityChange(this.gameObject, KPhysics.instance.gravityVector);
             }
         }
         else if (other.gameObject.CompareTag("GravityObject"))
         {
-            GravObjectController gravController = other.GetComponent<GravObjectController>();
+            KPhysicsObject gravController = other.GetComponent<KPhysicsObject>();
 
             if (gravController != null)
             {

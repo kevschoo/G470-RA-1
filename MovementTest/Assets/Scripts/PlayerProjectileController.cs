@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class PlayerProjectileController : MonoBehaviour
 {
-    public PlayerController playerController;
+    public PlayerMovementController playerController;
     public Transform BulletSpawnPoint;
     public GravityProjectile projectilePrefab;
     public float projectileCooldown = 1f; 
@@ -22,28 +22,25 @@ public class PlayerProjectileController : MonoBehaviour
     void FireProjectile()
     {
         Vector2 fireDirection = GetFireDirection();
+
+        if (playerController.isFlipped)
+        {
+            fireDirection *= -1;
+        }
+
         Quaternion projectileRotation = Quaternion.Euler(0f, 0f, Vector2.SignedAngle(Vector2.right, fireDirection));
-        GravityProjectile gravBullet = Instantiate(projectilePrefab, BulletSpawnPoint.transform.position, projectileRotation);
-        gravBullet.Parent = this.gameObject;
+        GravityProjectile gravBullet = Instantiate(projectilePrefab, BulletSpawnPoint.position, projectileRotation);
+        gravBullet.Initialize(fireDirection, playerController.isFlipped);
     }
 
     Vector2 GetFireDirection()
     {
-        if (playerController != null)
-        {
-            Vector2 gravityDirection = playerController.useGlobalGravity 
-                ? WorldPhysicsEvents.instance.gravityVector
-                : playerController.playerGravityDirection;
+        Vector2 gravityDirection = playerController.useGlobalGravity 
+            ? KPhysics.instance.gravityVector
+            : playerController.localGravityDirection;
 
-            Vector2 baseDirection = new Vector2(-gravityDirection.y, gravityDirection.x).normalized;
+        Vector2 baseDirection = new Vector2(-gravityDirection.y, gravityDirection.x).normalized;
 
-            if (playerController.isFlipped)
-            {
-                baseDirection = new Vector2(-baseDirection.x, baseDirection.y);
-            }
-
-            return baseDirection;
-        }
-        return Vector2.right; 
+        return baseDirection;
     }
 }
